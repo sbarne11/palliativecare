@@ -1,0 +1,36 @@
+@charset "utf-8";
+/* CSS Document */
+
+ul{
+	text-decoration: none;
+	display: inline-block;
+	text-align: center;
+	width: 100%;
+}
+
+li{
+	text-decoration: none;
+	list-style-type: none;
+	display: inline-block;
+	padding: 50px;
+	font-size: 24pt;
+}
+
+a, a:link, a:visited, a:hover, a:active{
+	text-decoration: none;
+	display: inline-block;
+	color: black;
+	
+}
+
+a:hover{
+	color:gray ;
+}
+h1{
+	text-align: center;
+}
+
+nav{
+	background-color: antiquewhite;
+}
+
