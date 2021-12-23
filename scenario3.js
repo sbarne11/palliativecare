@@ -3,11 +3,11 @@
 var p; // shortcut to reference prototypes
 var lib={};var ss={};var img={};
 lib.ssMetadata = [
-		{name:"Scenario3_atlas_1", frames: [[0,0,1046,774],[0,776,1027,768]]},
-		{name:"Scenario3_atlas_2", frames: [[0,0,1024,768],[0,770,1024,768]]},
-		{name:"Scenario3_atlas_3", frames: [[0,720,1043,683],[0,0,1046,718]]},
-		{name:"Scenario3_atlas_4", frames: [[748,700,746,724],[0,685,746,734],[1045,0,973,698],[0,1421,741,572],[743,1426,767,502],[0,0,1043,683]]},
-		{name:"Scenario3_atlas_5", frames: [[266,504,392,394],[293,900,170,642],[0,1113,291,524],[637,900,163,608],[0,504,264,607],[769,0,304,555],[465,900,170,636],[660,557,347,249],[0,0,767,502]]}
+		{name:"scenario3_atlas_1", frames: [[0,0,1046,774],[0,776,1027,768]]},
+		{name:"scenario3_atlas_2", frames: [[0,0,1024,768],[0,770,1024,768]]},
+		{name:"scenario3_atlas_3", frames: [[0,720,1043,683],[0,0,1046,718]]},
+		{name:"scenario3_atlas_4", frames: [[748,700,746,724],[0,685,746,734],[1045,0,973,698],[0,1421,741,572],[743,1426,767,502],[0,0,1043,683]]},
+		{name:"scenario3_atlas_5", frames: [[266,504,392,394],[293,900,170,642],[0,1113,291,524],[637,900,163,608],[0,504,264,607],[769,0,304,555],[465,900,170,636],[660,557,347,249],[0,0,767,502]]}
 ];
 
 
@@ -32,147 +32,147 @@ lib.ssMetadata = [
 
 
 (lib.Background = function() {
-	this.initialize(ss["Scenario3_atlas_1"]);
+	this.initialize(ss["scenario3_atlas_1"]);
 	this.gotoAndStop(0);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Background2 = function() {
-	this.initialize(ss["Scenario3_atlas_1"]);
+	this.initialize(ss["scenario3_atlas_1"]);
 	this.gotoAndStop(1);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Bitmap21 = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(0);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.brushing = function() {
-	this.initialize(ss["Scenario3_atlas_4"]);
+	this.initialize(ss["scenario3_atlas_4"]);
 	this.gotoAndStop(0);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.burshing2 = function() {
-	this.initialize(ss["Scenario3_atlas_4"]);
+	this.initialize(ss["scenario3_atlas_4"]);
 	this.gotoAndStop(1);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.careafterdeath = function() {
-	this.initialize(ss["Scenario3_atlas_2"]);
+	this.initialize(ss["scenario3_atlas_2"]);
 	this.gotoAndStop(0);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.endoflife = function() {
-	this.initialize(ss["Scenario3_atlas_2"]);
+	this.initialize(ss["scenario3_atlas_2"]);
 	this.gotoAndStop(1);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Face2Face = function() {
-	this.initialize(ss["Scenario3_atlas_3"]);
+	this.initialize(ss["scenario3_atlas_3"]);
 	this.gotoAndStop(0);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.familytogether = function() {
-	this.initialize(ss["Scenario3_atlas_4"]);
+	this.initialize(ss["scenario3_atlas_4"]);
 	this.gotoAndStop(2);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Jane_Thinking = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(1);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.JaneSitting = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(2);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Karen_Peaceful = function() {
-	this.initialize(ss["Scenario3_atlas_4"]);
+	this.initialize(ss["scenario3_atlas_4"]);
 	this.gotoAndStop(3);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.nonverbal = function() {
-	this.initialize(ss["Scenario3_atlas_4"]);
+	this.initialize(ss["scenario3_atlas_4"]);
 	this.gotoAndStop(4);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Nurse1 = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(3);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Nurse1_shoulder = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(4);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Nurse1Sitting = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(5);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.NurseJane = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(6);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Presence1 = function() {
-	this.initialize(ss["Scenario3_atlas_3"]);
+	this.initialize(ss["scenario3_atlas_3"]);
 	this.gotoAndStop(1);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Speechbubble = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(7);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.verbal = function() {
-	this.initialize(ss["Scenario3_atlas_5"]);
+	this.initialize(ss["scenario3_atlas_5"]);
 	this.gotoAndStop(8);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.Writteb = function() {
-	this.initialize(ss["Scenario3_atlas_4"]);
+	this.initialize(ss["scenario3_atlas_4"]);
 	this.gotoAndStop(5);
 }).prototype = p = new cjs.Sprite();
 // helper functions:
@@ -3731,7 +3731,7 @@ if (reversed == null) { reversed = false; }
 
 
 // stage content:
-(lib.scenario3 = function(mode,startPosition,loop,reversed) {
+(lib.Scenario3 = function(mode,startPosition,loop,reversed) {
 if (loop == null) { loop = true; }
 if (reversed == null) { reversed = false; }
 	var props = new Object();
@@ -4881,11 +4881,11 @@ lib.properties = {
 	color: "#68CAD7",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Scenario3_atlas_1.png", id:"Scenario3_atlas_1"},
-		{src:"images/Scenario3_atlas_2.png", id:"Scenario3_atlas_2"},
-		{src:"images/Scenario3_atlas_3.png", id:"Scenario3_atlas_3"},
-		{src:"images/Scenario3_atlas_4.png", id:"Scenario3_atlas_4"},
-		{src:"images/Scenario3_atlas_5.png", id:"Scenario3_atlas_5"}
+		{src:"images/scenario3_atlas_1.png", id:"scenario3_atlas_1"},
+		{src:"images/scenario3_atlas_2.png", id:"scenario3_atlas_2"},
+		{src:"images/scenario3_atlas_3.png", id:"scenario3_atlas_3"},
+		{src:"images/scenario3_atlas_4.png", id:"scenario3_atlas_4"},
+		{src:"images/scenario3_atlas_5.png", id:"scenario3_atlas_5"}
 	],
 	preloads: []
 };
