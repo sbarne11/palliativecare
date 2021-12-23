@@ -14,17 +14,131 @@ lib.ssMetadata = [
 (lib.AnMovieClip = function(){
 	this.actionFrames = [];
 	this.ignorePause = false;
+	this.currentSoundStreamInMovieclip;
+	this.soundStreamDuration = new Map();
+	this.streamSoundSymbolsList = [];
+
+	this.gotoAndPlayForStreamSoundSync = function(positionOrLabel){
+		cjs.MovieClip.prototype.gotoAndPlay.call(this,positionOrLabel);
+	}
 	this.gotoAndPlay = function(positionOrLabel){
+		this.clearAllSoundStreams();
+		var pos = this.timeline.resolve(positionOrLabel);
+		if (pos != null) { this.startStreamSoundsForTargetedFrame(pos); }
 		cjs.MovieClip.prototype.gotoAndPlay.call(this,positionOrLabel);
 	}
 	this.play = function(){
+		this.clearAllSoundStreams();
+		this.startStreamSoundsForTargetedFrame(this.currentFrame);
 		cjs.MovieClip.prototype.play.call(this);
 	}
 	this.gotoAndStop = function(positionOrLabel){
 		cjs.MovieClip.prototype.gotoAndStop.call(this,positionOrLabel);
+		this.clearAllSoundStreams();
 	}
 	this.stop = function(){
 		cjs.MovieClip.prototype.stop.call(this);
+		this.clearAllSoundStreams();
+	}
+	this.startStreamSoundsForTargetedFrame = function(targetFrame){
+		for(var index=0; index<this.streamSoundSymbolsList.length; index++){
+			if(index <= targetFrame && this.streamSoundSymbolsList[index] != undefined){
+				for(var i=0; i<this.streamSoundSymbolsList[index].length; i++){
+					var sound = this.streamSoundSymbolsList[index][i];
+					if(sound.endFrame > targetFrame){
+						var targetPosition = Math.abs((((targetFrame - sound.startFrame)/lib.properties.fps) * 1000));
+						var instance = playSound(sound.id);
+						var remainingLoop = 0;
+						if(sound.offset){
+							targetPosition = targetPosition + sound.offset;
+						}
+						else if(sound.loop > 1){
+							var loop = targetPosition /instance.duration;
+							remainingLoop = Math.floor(sound.loop - loop);
+							if(targetPosition == 0){ remainingLoop -= 1; }
+							targetPosition = targetPosition % instance.duration;
+						}
+						instance.loop = remainingLoop;
+						instance.position = Math.round(targetPosition);
+						this.InsertIntoSoundStreamData(instance, sound.startFrame, sound.endFrame, sound.loop , sound.offset);
+					}
+				}
+			}
+		}
+	}
+	this.InsertIntoSoundStreamData = function(soundInstance, startIndex, endIndex, loopValue, offsetValue){ 
+ 		this.soundStreamDuration.set({instance:soundInstance}, {start: startIndex, end:endIndex, loop:loopValue, offset:offsetValue});
+	}
+	this.clearAllSoundStreams = function(){
+		this.soundStreamDuration.forEach(function(value,key){
+			key.instance.stop();
+		});
+ 		this.soundStreamDuration.clear();
+		this.currentSoundStreamInMovieclip = undefined;
+	}
+	this.stopSoundStreams = function(currentFrame){
+		if(this.soundStreamDuration.size > 0){
+			var _this = this;
+			this.soundStreamDuration.forEach(function(value,key,arr){
+				if((value.end) == currentFrame){
+					key.instance.stop();
+					if(_this.currentSoundStreamInMovieclip == key) { _this.currentSoundStreamInMovieclip = undefined; }
+					arr.delete(key);
+				}
+			});
+		}
+	}
+
+	this.computeCurrentSoundStreamInstance = function(currentFrame){
+		if(this.currentSoundStreamInMovieclip == undefined){
+			var _this = this;
+			if(this.soundStreamDuration.size > 0){
+				var maxDuration = 0;
+				this.soundStreamDuration.forEach(function(value,key){
+					if(value.end > maxDuration){
+						maxDuration = value.end;
+						_this.currentSoundStreamInMovieclip = key;
+					}
+				});
+			}
+		}
+	}
+	this.getDesiredFrame = function(currentFrame, calculatedDesiredFrame){
+		for(var frameIndex in this.actionFrames){
+			if((frameIndex > currentFrame) && (frameIndex < calculatedDesiredFrame)){
+				return frameIndex;
+			}
+		}
+		return calculatedDesiredFrame;
+	}
+
+	this.syncStreamSounds = function(){
+		this.stopSoundStreams(this.currentFrame);
+		this.computeCurrentSoundStreamInstance(this.currentFrame);
+		if(this.currentSoundStreamInMovieclip != undefined){
+			var soundInstance = this.currentSoundStreamInMovieclip.instance;
+			if(soundInstance.position != 0){
+				var soundValue = this.soundStreamDuration.get(this.currentSoundStreamInMovieclip);
+				var soundPosition = (soundValue.offset?(soundInstance.position - soundValue.offset): soundInstance.position);
+				var calculatedDesiredFrame = (soundValue.start)+((soundPosition/1000) * lib.properties.fps);
+				if(soundValue.loop > 1){
+					calculatedDesiredFrame +=(((((soundValue.loop - soundInstance.loop -1)*soundInstance.duration)) / 1000) * lib.properties.fps);
+				}
+				calculatedDesiredFrame = Math.floor(calculatedDesiredFrame);
+				var deltaFrame = calculatedDesiredFrame - this.currentFrame;
+				if((deltaFrame >= 0) && this.ignorePause){
+					cjs.MovieClip.prototype.play.call(this);
+					this.ignorePause = false;
+				}
+				else if(deltaFrame >= 2){
+					this.gotoAndPlayForStreamSoundSync(this.getDesiredFrame(this.currentFrame,calculatedDesiredFrame));
+				}
+				else if(deltaFrame <= -2){
+					cjs.MovieClip.prototype.stop.call(this);
+					this.ignorePause = true;
+				}
+			}
+		}
 	}
 }).prototype = p = new cjs.MovieClip();
 // symbols:
@@ -3731,7 +3845,7 @@ if (reversed == null) { reversed = false; }
 
 
 // stage content:
-(lib.Scenario3 = function(mode,startPosition,loop,reversed) {
+(lib.scenario3 = function(mode,startPosition,loop,reversed) {
 if (loop == null) { loop = true; }
 if (reversed == null) { reversed = false; }
 	var props = new Object();
@@ -3742,9 +3856,14 @@ if (reversed == null) { reversed = false; }
 	props.reversed = reversed;
 	cjs.MovieClip.apply(this,[props]);
 
-	this.actionFrames = [0,390,1909,1910,2470,2574,5249,5696,6679,7905];
+	this.actionFrames = [0,1,390,536,1909,1910,2040,2470,2574,5249,5696,6679,7905];
+	this.streamSoundSymbolsList[1] = [{id:"bensoundtomorrow",startFrame:1,endFrame:389,loop:0,offset:0}];
+	this.streamSoundSymbolsList[536] = [{id:"bensoundtomorrow",startFrame:536,endFrame:1910,loop:1,offset:22321}];
+	this.streamSoundSymbolsList[2040] = [{id:"bensoundtomorrow",startFrame:2040,endFrame:7906,loop:1,offset:85073}];
 	// timeline functions:
 	this.frame_0 = function() {
+		this.clearAllSoundStreams();
+		 
 		this.stop();
 		var _this = this;
 		
@@ -3752,6 +3871,10 @@ if (reversed == null) { reversed = false; }
 		
 		_this.gotoAndPlay(2);
 		});
+	}
+	this.frame_1 = function() {
+		var soundInstance = playSound("bensoundtomorrow",-1);
+		this.InsertIntoSoundStreamData(soundInstance,1,389,0);
 	}
 	this.frame_390 = function() {
 		var _this = this;
@@ -3762,6 +3885,10 @@ if (reversed == null) { reversed = false; }
 		});
 		
 		_this.stop();
+	}
+	this.frame_536 = function() {
+		var soundInstance = playSound("bensoundtomorrow",0,22321);
+		this.InsertIntoSoundStreamData(soundInstance,536,1910,1,22321);
 	}
 	this.frame_1909 = function() {
 		this.stop();
@@ -3859,6 +3986,10 @@ if (reversed == null) { reversed = false; }
 			this.movieClip_6.visible = true;
 		}
 	}
+	this.frame_2040 = function() {
+		var soundInstance = playSound("bensoundtomorrow",0,85073);
+		this.InsertIntoSoundStreamData(soundInstance,2040,7906,1,85073);
+	}
 	this.frame_2470 = function() {
 		var _this = this;
 		
@@ -3913,11 +4044,11 @@ if (reversed == null) { reversed = false; }
 	this.frame_7905 = function() {
 		var _this = this;
 		
-		_this.gotoAndPlay('1');
+		_this.gotoAndPlay('0');
 	}
 
 	// actions tween:
-	this.timeline.addTween(cjs.Tween.get(this).call(this.frame_0).wait(390).call(this.frame_390).wait(1519).call(this.frame_1909).wait(1).call(this.frame_1910).wait(560).call(this.frame_2470).wait(104).call(this.frame_2574).wait(2675).call(this.frame_5249).wait(447).call(this.frame_5696).wait(983).call(this.frame_6679).wait(1226).call(this.frame_7905).wait(1));
+	this.timeline.addTween(cjs.Tween.get(this).call(this.frame_0).wait(1).call(this.frame_1).wait(389).call(this.frame_390).wait(146).call(this.frame_536).wait(1373).call(this.frame_1909).wait(1).call(this.frame_1910).wait(130).call(this.frame_2040).wait(430).call(this.frame_2470).wait(104).call(this.frame_2574).wait(2675).call(this.frame_5249).wait(447).call(this.frame_5696).wait(983).call(this.frame_6679).wait(1226).call(this.frame_7905).wait(1));
 
 	// Text4
 	this.instance = new lib.Tween16("synched",0);
@@ -4596,9 +4727,10 @@ if (reversed == null) { reversed = false; }
 	// Texteol2
 	this.instance_80 = new lib.Tween56("synched",0);
 	this.instance_80.setTransform(506.9,103.15);
+	this.instance_80.alpha = 0;
 	this.instance_80._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_80).wait(2689).to({_off:false},0).to({startPosition:0},18).to({startPosition:0},122).to({alpha:0},18).to({_off:true},1).wait(5058));
+	this.timeline.addTween(cjs.Tween.get(this.instance_80).wait(2689).to({_off:false},0).to({alpha:1},18).to({startPosition:0},122).to({alpha:0},18).to({_off:true},1).wait(5058));
 
 	// Texteol1
 	this.instance_81 = new lib.Tween55("synched",0);
@@ -4753,7 +4885,7 @@ if (reversed == null) { reversed = false; }
 	this.instance_96.alpha = 0;
 	this.instance_96._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_96).wait(7396).to({_off:false},0).to({alpha:1},1).to({startPosition:0},349).to({alpha:0},20).to({_off:true},1).wait(139));
+	this.timeline.addTween(cjs.Tween.get(this.instance_96).wait(7411).to({_off:false},0).to({alpha:1},1).to({startPosition:0},334).to({alpha:0},20).to({_off:true},1).wait(139));
 
 	// HairBrush1
 	this.instance_97 = new lib.Tween116("synched",0);
@@ -4761,7 +4893,7 @@ if (reversed == null) { reversed = false; }
 	this.instance_97.alpha = 0;
 	this.instance_97._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_97).wait(7345).to({_off:false},0).to({alpha:1},24).to({startPosition:0},27).to({alpha:0},1).to({_off:true},1).wait(508));
+	this.timeline.addTween(cjs.Tween.get(this.instance_97).wait(7345).to({_off:false},0).to({alpha:1},24).to({startPosition:0},42).to({alpha:0},1).to({_off:true},1).wait(493));
 
 	// Scen4Background
 	this.instance_98 = new lib.Tween117("synched",0);
@@ -4885,7 +5017,8 @@ lib.properties = {
 		{src:"images/scenario3_atlas_2.png", id:"scenario3_atlas_2"},
 		{src:"images/scenario3_atlas_3.png", id:"scenario3_atlas_3"},
 		{src:"images/scenario3_atlas_4.png", id:"scenario3_atlas_4"},
-		{src:"images/scenario3_atlas_5.png", id:"scenario3_atlas_5"}
+		{src:"images/scenario3_atlas_5.png", id:"scenario3_atlas_5"},
+		{src:"sounds/bensoundtomorrow.mp3", id:"bensoundtomorrow"}
 	],
 	preloads: []
 };
